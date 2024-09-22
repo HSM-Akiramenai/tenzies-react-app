@@ -10,13 +10,15 @@ export default function MainContent({
       <h1>Tenzies</h1>
       <h2>
         {hasGameStarted
-          ? `Game will auto reset after 99 seconds.`
+          ? isGameWon
+            ? `You won Tenzies!`
+            : `The game will automatically reset if not won within 100 seconds.`
           : `Roll until all dice are the same. Click each die to freeze it at its
         current value between rolls.`}
       </h2>
       <div className="dice-container">{dieElements}</div>
       <button className="roll-btn" onClick={handleRollOrReset}>
-        {hasGameStarted ? (isGameWon ? "Play Again" : "Roll") : "Play Tenzies"}
+        {hasGameStarted ? (isGameWon ? "Reset game" : "Roll") : "Play Tenzies"}
       </button>
     </main>
   );

@@ -88,10 +88,13 @@ function App() {
   }, [hasGameStarted, isGameWon, time]);
 
   function handleRollOrReset() {
-    if (hasGameStarted === false) {
-      setHasGameStarted(true);
+    if (!hasGameStarted) {
+      setHasGameStarted(true); // Start the game, but don't roll dice
+    } else if (isGameWon) {
+      resetGame(); // Reset the game if won
+    } else {
+      rollDiceAndTrackRolls(); // Only roll dice after game has started
     }
-    isGameWon ? resetGame() : rollDiceAndTrackRolls();
   }
 
   function rollDiceAndTrackRolls() {
@@ -112,13 +115,15 @@ function App() {
   }
 
   function holdDice(idOfClickedDie) {
-    setDice((prevDice) => {
-      return prevDice.map((prevDie) => {
-        return prevDie.id === idOfClickedDie
-          ? { ...prevDie, isHeld: !prevDie.isHeld }
-          : prevDie;
+    if (hasGameStarted === true) {
+      setDice((prevDice) => {
+        return prevDice.map((prevDie) => {
+          return prevDie.id === idOfClickedDie
+            ? { ...prevDie, isHeld: !prevDie.isHeld }
+            : prevDie;
+        });
       });
-    });
+    }
   }
 
   function getFromLocalStorage(key, fallBackValue) {
