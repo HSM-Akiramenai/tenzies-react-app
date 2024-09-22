@@ -9,6 +9,7 @@ import FooterContent from "./components/FooterContent";
 function App() {
   const numOfDice = 10;
   const [dice, setDice] = React.useState(initializeDice());
+  const [hasGameStarted, setHasGameStarted] = React.useState(false);
   const [isGameWon, setisGameWon] = React.useState(false);
   const [rollCount, setRollCount] = React.useState(0);
   const [time, setTime] = React.useState(0);
@@ -71,18 +72,25 @@ function App() {
   React.useEffect(() => {
     let timerId;
 
-    if (isGameWon === false) {
+    if (hasGameStarted && isGameWon === false) {
       timerId = setInterval(() => {
         setTime((prevTime) => prevTime + 1);
       }, 1000);
     }
 
+    if (time >= 100) {
+      resetGame();
+    }
+
     return () => {
       clearInterval(timerId);
     };
-  }, [isGameWon]);
+  }, [hasGameStarted, isGameWon, time]);
 
   function handleRollOrReset() {
+    if (hasGameStarted === false) {
+      setHasGameStarted(true);
+    }
     isGameWon ? resetGame() : rollDiceAndTrackRolls();
   }
 
@@ -99,6 +107,7 @@ function App() {
     setTime(0);
     setRollCount(0);
     setisGameWon(false);
+    setHasGameStarted(false);
     setDice(initializeDice());
   }
 
@@ -129,11 +138,14 @@ function App() {
   return (
     <>
       {isGameWon && <Confetti width={width} height={height} />}
+
       <MainContent
         dieElements={dieElements}
         isGameWon={isGameWon}
         handleRollOrReset={handleRollOrReset}
+        hasGameStarted={hasGameStarted}
       />
+
       <FooterContent
         rollCount={rollCount}
         time={time}
